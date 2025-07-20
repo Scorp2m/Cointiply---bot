@@ -1,1 +1,26 @@
+import asyncio
+import os
+from aiogram import Bot, Dispatcher, types
+from aiogram.utils import executor
 
+TOKEN = os.getenv("BOT_TOKEN")
+REF_LINK = "https://cointiply.mobi/Eod9"
+
+bot = Bot(token=TOKEN)
+dp = Dispatcher(bot)
+
+promo_codes = [
+    {"code": "FREE1000", "description": "+1000 коінів, дійсний 6 годин"},
+]
+
+@dp.message_handler(commands=["start", "старт"])
+async def cmd_start(message):
+    await message.answer(f"Привіт, {message.from_user.first_name}!\nРеф: {REF_LINK}")
+
+@dp.message_handler(commands=["промокоди"])
+async def cmd_promocodes(message):
+    text = "\n".join(f"{p['code']} — {p['description']}" for p in promo_codes)
+    await message.answer(text)
+
+if __name__ == "__main__":
+    executor.start_polling(dp, skip_updates=True)
